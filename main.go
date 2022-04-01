@@ -12,6 +12,8 @@ import (
 	"golang.org/x/crypto/sha3"
 )
 
+///////example for eth airdrop/////////
+
 // testcontent is indeed leaf
 type TestContent struct {
 	index   string
@@ -55,6 +57,8 @@ func (t TestContent) Equals(other merkle.Content) (bool, error) {
 	}
 }
 
+//example case of solidity merkle tree
+
 func main() {
 
 	var list []merkle.Content
@@ -83,12 +87,26 @@ func main() {
 		amount:  "3",
 	})
 
+	list = append(list, TestContent{
+		index:   "4",
+		address: "0x37e9e835171e40ceb35cdb0a05346f9c451c6156",
+		amount:  "4",
+	})
+
+	list = append(list, TestContent{
+		index:   "5",
+		address: "0x37e9e835171e40ceb35cdb0a05346f9c451c6156",
+		amount:  "5",
+	})
+
+	list = append(list, TestContent{
+		index:   "6",
+		address: "0x37e9e835171e40ceb35cdb0a05346f9c451c6156",
+		amount:  "60000000000000",
+	})
+
 	t, err := merkle.NewTreeWithHashStrategy(list,
 		func(left []byte, right []byte) []byte {
-			// fmt.Println("////////////////")
-			// fmt.Printf("left:%x\n", left)
-			// fmt.Printf("right:%x\n", right)
-			// fmt.Println("////////////////")
 			hash := sha3.NewLegacyKeccak256()
 			if string(left) == string(right) {
 				return left
@@ -102,12 +120,21 @@ func main() {
 
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	//Get the Merkle Root of the tree
-	mr := t.MerkleRoot()
-	//fmt.Println(mr)
-	//fmt.Println(hex.EncodeToString(mr))
-	fmt.Printf("%x\n", mr)
+	root := t.MerkleRoot()
+	fmt.Println("root: ")
+	fmt.Println("0x" + hex.EncodeToString(root))
+
+	for index, listitem := range list {
+		fmt.Println("/////////////////////////////////////////////")
+		fmt.Println("index of :", index)
+		paths, _, _ := t.GetMerklePath(listitem)
+		for _, item := range paths {
+			fmt.Println("0x" + hex.EncodeToString(item))
+		}
+	}
 
 }

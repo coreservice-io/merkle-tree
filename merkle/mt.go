@@ -70,6 +70,10 @@ func (n *Node) calculateNodeHash() ([]byte, error) {
 //strategy. Note that the hash type used in the type that implements the Content interface must
 //match the hash type profided to the tree.
 func NewTreeWithHashStrategy(cs []Content, hashMerge func(left []byte, right []byte) []byte) (*MerkleTree, error) {
+
+	if len(cs) == 0 {
+		return nil, errors.New("0 input list not allowed")
+	}
 	t := &MerkleTree{}
 	t.hashMerge = hashMerge
 	root, leafs, err := buildWithContent(cs, t)
@@ -90,12 +94,21 @@ func (m *MerkleTree) GetMerklePath(content Content) ([][]byte, []int64, error) {
 			return nil, nil, err
 		}
 
+		//acutally the only one leaf input
+		if len(m.Leafs) == 2 && bytes.Equal(current.Hash, current.Parent.Hash) {
+			return nil, nil, nil
+		}
+
 		if ok {
 			currentParent := current.Parent
 			var merklePath [][]byte
 			var index []int64
+
 			for currentParent != nil {
-				if bytes.Equal(currentParent.Left.Hash, current.Hash) {
+
+				if bytes.Equal(currentParent.Hash, current.Hash) {
+					//bypass the alone node
+				} else if bytes.Equal(currentParent.Left.Hash, current.Hash) {
 					merklePath = append(merklePath, currentParent.Right.Hash)
 					index = append(index, 1) // right leaf
 				} else {
@@ -108,7 +121,7 @@ func (m *MerkleTree) GetMerklePath(content Content) ([][]byte, []int64, error) {
 			return merklePath, index, nil
 		}
 	}
-	return nil, nil, nil
+	return nil, nil, errors.New("input not a leaf")
 }
 
 //buildWithContent is a helper function that for a given set of Contents, generates a
