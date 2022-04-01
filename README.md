@@ -1,7 +1,7 @@
 # merkleTree
 
 
-```
+```go
 ///////example for eth airdrop/////////
 
 package main
