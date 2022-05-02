@@ -1,4 +1,4 @@
-module github.com/coreservice-io/merkleTree
+module github.com/coreservice-io/merkle-tree
 
 go 1.17
 

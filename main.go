@@ -7,7 +7,7 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/coreservice-io/merkleTree/merkle"
+	"github.com/coreservice-io/merkle-tree/merkle"
 	"github.com/ethereum/go-ethereum/common/math"
 	"golang.org/x/crypto/sha3"
 )
