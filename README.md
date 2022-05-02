@@ -1,4 +1,4 @@
-# merkleTree
+# merkle-tree
 
 
 ```go
